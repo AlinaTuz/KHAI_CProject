@@ -68,17 +68,22 @@ namespace DrawingFromGleeGraph {
 
             return true;
         }
+        
         public void EulerCycle(Edge v, List<Edge> edges, List<string> cycle)
-        {           
-            Node n = v.Target;
-            edges.Remove(v);
-            for (int i = n.OutEdges.Count() - 1; i >= 0 ; i--)
+        {         
+            while(edges.Count() > 0)
             {
-                v = n.OutEdges.ElementAt(i);
-                if (edges.Exists(x => (x.Source.Id == v.Source.Id && x.Target.Id == v.Target.Id)))
+                cycle.Add(v.Source.Id);
+                Node n = v.Target;
+                edges.Remove(v);
+                for (int i = n.OutEdges.Count() - 1; i >= 0; i--)
                 {
-                    cycle.Add(v.Source.Id);
-                    EulerCycle(v, edges, cycle);
+                    Edge w = n.OutEdges.ElementAt(i);
+                    if (edges.Exists(x => (x.Source.Id == w.Source.Id && x.Target.Id == w.Target.Id)))
+                    { 
+                        v = w;
+                        break;
+                    }
                 }
             }
         }
@@ -536,8 +541,6 @@ namespace DrawingFromGleeGraph {
             {
                 visited.Add(gleeGraph1.Edges[i]);
             }
-
-            cycle1.Add(gleeGraph1.Edges[0].Source.Id);
             EulerCycle(gleeGraph1.Edges[0], visited, cycle1);
             cycle1.Add(gleeGraph1.Edges[0].Source.Id);
 
@@ -559,8 +562,6 @@ namespace DrawingFromGleeGraph {
             {
                 visited.Add(gleeGraph2.Edges[i]);
             }
-
-            cycle2.Add(gleeGraph2.Edges[0].Source.Id);
             EulerCycle(gleeGraph2.Edges[0], visited, cycle2);
             cycle2.Add(gleeGraph2.Edges[0].Source.Id);
 
